@@ -64,10 +64,10 @@ def ensure_patched() -> None:
 ensure_patched()
 
 
+from pathlib import Path
+
+_BASE = Path(__file__).resolve().parent
+
 def model_yaml(name: str = "argus_v8x.yaml") -> str:
-    """
-    Return an absolute path to a packaged YAML under vigia_argus/cfg/.
-    Example:
-        YOLO(model_yaml("argus_v8x.yaml"))
-    """
-    return str(files("vigia_argus.cfg") / name)
+    """Return an absolute filesystem path to a packaged YAML."""
+    return str(_BASE / "cfg" / name)
