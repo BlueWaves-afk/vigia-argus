@@ -1,0 +1,15 @@
+[project]
+name = "vigia-argus"
+version = "0.1.0"
+description = "Argus-V8X plugin: YOLOv8 + SimAM + tiny Swin for robust road hazard detection"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "ultralytics>=8.2.0",
+  "torch>=2.1",
+  "numpy"
+]
+license = { text = "Apache-2.0" }  
+
+[tool.setuptools.package-data]
+vigia_argus = ["cfg/*.yaml"]

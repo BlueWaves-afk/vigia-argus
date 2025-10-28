@@ -1,0 +1,75 @@
+# Argus-V8X-P2 (adds P2/4 output for detecting tiny objects)
+# Requires: SimAM, SwinBlock registered
+nc: 4
+
+scales:
+  n: [0.33, 0.25, 1024]
+  s: [0.33, 0.50, 1024]
+  m: [0.67, 0.75, 768]
+  l: [1.00, 1.00, 512]
+  x: [1.00, 1.25, 512]
+
+# ---------------------------
+# Backbone (same blocks; just keep track of P2 feature)
+# ---------------------------
+backbone:
+  - [-1, 1, Conv, [64, 3, 2]]            # 0  P1/2
+  - [-1, 1, Conv, [128, 3, 2]]           # 1  P2/4
+  - [-1, 3, C2f, [128, True]]            # 2
+  - [-1, 1, SimAM, []]                   # 3   <-- P2 feature (keep for head)
+
+  - [-1, 1, Conv, [256, 3, 2]]           # 4  P3/8
+  - [-1, 6, C2f, [256, True]]            # 5
+  - [-1, 1, SimAM, []]                   # 6   <-- P3 feature
+
+  - [-1, 1, Conv, [512, 3, 2]]           # 7  P4/16
+  - [-1, 6, C2f, [512, True]]            # 8
+  - [-1, 1, SimAM, []]                   # 9   <-- P4 feature
+
+  - [-1, 1, Conv, [1024, 3, 2]]          # 10 P5/32
+  - [-1, 3, C2f, [1024, True]]           # 11
+  - [-1, 1, SimAM, []]                   # 12
+  - [-1, 1, SwinBlock, [1024, 1, 7, 4, 4]] # 13 Swin @ P5
+  - [-1, 1, SPPF, [1024, 5]]             # 14  <-- P5 feature
+
+# ---------------------------
+# Head (adds P2 branch)
+# ---------------------------
+head:
+  # P5 -> P4
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]       # 15
+  - [[-1, 9], 1, Concat, [1]]                        # 16
+  - [-1, 3, C2f, [512]]                               # 17
+  - [-1, 1, SimAM, []]                                # 18   (P4 head)
+
+  # P4 -> P3
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]       # 19
+  - [[-1, 6], 1, Concat, [1]]                        # 20
+  - [-1, 3, C2f, [256]]                               # 21
+  - [-1, 1, SimAM, []]                                # 22   (P3 head)
+
+  # P3 -> P2 (extra scale)
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]       # 23
+  - [[-1, 3], 1, Concat, [1]]                        # 24   cat with P2 feature from idx 3
+  - [-1, 3, C2f, [128]]                               # 25   (P2/4)
+  - [-1, 1, SimAM, []]                                # 26
+
+  # Down path: P2 -> P3
+  - [-1, 1, Conv, [128, 3, 2]]                        # 27
+  - [[-1, 22], 1, Concat, [1]]                         # 28
+  - [-1, 3, C2f, [256]]                                # 29
+  - [-1, 1, SimAM, []]                                 # 30
+
+  # Down path: P3 -> P4
+  - [-1, 1, Conv, [256, 3, 2]]                         # 31
+  - [[-1, 18], 1, Concat, [1]]                          # 32
+  - [-1, 3, C2f, [512]]                                 # 33
+  - [-1, 1, SimAM, []]                                  # 34
+
+  # Down path: P4 -> P5
+  - [-1, 1, Conv, [512, 3, 2]]                          # 35
+  - [[-1, 14], 1, Concat, [1]]                           # 36
+  - [-1, 3, C2f, [1024]]                                 # 37
+  - [-1, 1, SimAM, []]                                   # 38
+
+  - [[26, 30, 34, 38], 1, Detect, [nc]]                  # Detect(P2,P3,P4,P5)
