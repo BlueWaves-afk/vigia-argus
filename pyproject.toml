@@ -1,6 +1,6 @@
 [project]
 name = "vigia-argus"
-version = "0.1.0"
+version = "0.1.1"
 description = "Argus-V8X: YOLOv8 + SimAM + tiny Swin (export-friendly) plugin for robust road hazards"
 readme = "README.md"
 requires-python = ">=3.9"
