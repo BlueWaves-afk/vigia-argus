@@ -1,15 +1,25 @@
 [project]
 name = "vigia-argus"
 version = "0.1.0"
-description = "Argus-V8X plugin: YOLOv8 + SimAM + tiny Swin for robust road hazard detection"
+description = "Argus-V8X: YOLOv8 + SimAM + tiny Swin (export-friendly) plugin for robust road hazards"
 readme = "README.md"
 requires-python = ">=3.9"
+license = { text = "Apache-2.0" }              
+authors = [{ name = "Tom Mathew", email = "eng.tommathew@gmail.com" }]
+keywords = ["ultralytics", "yolo", "simam", "swin", "tflite", "onnx", "edge-ai"]
+
 dependencies = [
   "ultralytics>=8.2.0",
-  "torch>=2.1",
+  "torch>=2.1",                 # users will install the CUDA build they need
   "numpy"
 ]
-license = { text = "Apache-2.0" }  
+
+[project.urls]
+Homepage = "https://github.com/BlueWaves-afk/vigia-argus"
+Issues   = "https://github.com/BlueWaves-afk/vigia-argus/issues"
+
+[tool.setuptools]
+packages = { find = { include = ["vigia_argus*"] } }
 
 [tool.setuptools.package-data]
 vigia_argus = ["cfg/*.yaml"]
