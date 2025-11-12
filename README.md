@@ -44,7 +44,7 @@ pip install "git+https://github.com/<your-org-or-user>/vigia-argus.git"
 
 ---
 
-⚡ Quick Start
+## Quick Start
 
 Python
 ```
@@ -69,7 +69,7 @@ yolo detect train model="$model" data=data.yaml imgsz=640 epochs=100
 
 ---
 
-📏 Model Scales
+## Model Scales
 
 Ultralytics applies width/depth multipliers per scale. The Swin block auto-adapts to the actual P5 channels, so you can train n for mobile or s/m if you can spend more compute.
 
@@ -83,7 +83,7 @@ Tip: rename the YAML to …-s.yaml to select a scale by filename, or set depth_m
 
 ---
 
-📚 Performance Guidance
+## Performance Guidance
 	•	Start with argus_v8x.yaml @ 640 INT8 for on-device demos.
 	•	If tiny debris / far potholes are missed, try argus_v8x_p2.yaml (expect ~10–25% more latency).
 	•	If PTQ loses > ~1.5 mAP, run QAT for 10–20 epochs.
@@ -91,14 +91,16 @@ Tip: rename the YAML to …-s.yaml to select a scale by filename, or set depth_m
 
 ---
 
-🛠️ Design Choices
+## Design Choices
+``
 	•	SimAM: parameter-free, cheap; placed widely (after C2f) to denoise features.
 	•	Swin @ P5: single, small block where features are compact; adds global context with limited cost.
 	•	Head unchanged: preserves exportability and tooling compatibility.
-
+``
 ---
 
-🔌 Compatibility
+## Compatibility
+
 	•	Ultralytics: ≥ 8.2.x
 	•	PyTorch: ≥ 2.1
 	•	ONNX: opset 12–13 recommended
@@ -106,7 +108,8 @@ Tip: rename the YAML to …-s.yaml to select a scale by filename, or set depth_m
 
 ---
 
-🗺️ Roadmap
+## Roadmap
+
 	•	Optional shifted windows (export-tested)
 	•	Argus-V8X-Lite preset (SimAM-only YAML)
 	•	Pretrained checkpoints on public road datasets
@@ -114,13 +117,12 @@ Tip: rename the YAML to …-s.yaml to select a scale by filename, or set depth_m
 
 ---
 
-📄 License & Notes
+## License & Notes
 	•	Plugin code under your chosen license (e.g., Apache-2.0 / MIT).
 	•	Depends on Ultralytics (licensed separately: AGPL-3.0 / Enterprise). Ensure your usage complies with Ultralytics’ terms when training/serving models over a network.
 
 ---
-
-🔑 Keywords
+## Keywords
 
 yolo · ultralytics · object-detection · simam · swin-transformer · attention · edge-ai · tflite · onnx · mobile
 
